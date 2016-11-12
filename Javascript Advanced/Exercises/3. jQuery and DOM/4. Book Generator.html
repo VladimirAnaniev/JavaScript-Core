@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Generator</title>
+    <script src="jquery-3.1.1.min.js"></script>
+</head>
+<body>
+    <div id="wrapper">
+
+    </div>
+    <script>
+        window.onload = function () {
+            createBook("#wrapper", "Alice in Wonderland", "Lewis Carroll", 1111);
+        }
+        
+        function createBook(selector, title, author, isbn) {
+            let wrapper = $(selector)
+
+            let bookDiv = $('<div>')
+            bookDiv.attr('id','book'+Number($(selector+ ' div').length+1))
+
+            bookDiv.append($('<p class="title">').text(title))
+                    .append($('<p class="author">').text(author))
+                    .append($('<p class="isbn">').text(isbn))
+                    .append($('<button>').text('Select').click(function () {
+                        bookDiv.css('border','2px solid blue')
+                    }))
+                    .append($('<button>').text('Deselect').click(function () {
+                        bookDiv.css('border','none')
+                    }))
+            wrapper.append(bookDiv)
+            
+        }
+    </script>
+</body>
+</html>

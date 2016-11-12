@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Town by Name</title>
+    <style>select, input { width: 100px }</style>
+    <script src="../../Exercises/3. jQuery and DOM/jquery-3.1.1.min.js"></script>
+</head>
+<body onload="attachEvents()">
+    <div>Towns</div>
+    <select id="towns" size="4">
+        <option>Sofia</option>
+        <option>Varna</option>
+        <option>Pleven</option>
+    </select>
+    <div>
+        <input type="text" id="townName" />
+        <button id="btnDelete">Delete</button>
+    </div>
+    <div id="result"></div>
+    <script>
+        function attachEvents() {
+            $('#btnDelete').on('click', function () {
+                let townInput = $('#townName')
+                let town = townInput.val()
+                townInput.val('')
+
+                let options = $('#towns').find('option')
+
+                let filtered = Array.from(options).filter(x => x.text ==town)
+
+                let result = $('#result')
+                if(filtered.length>0){
+                    for(let town of filtered){
+                        town.remove()
+                    }
+                    result.text(`${town} deleted.`)
+                }
+                else {
+                    result.text(`${town} not found.`)
+                }
+            })
+        }
+    </script>
+</body>
+</html>

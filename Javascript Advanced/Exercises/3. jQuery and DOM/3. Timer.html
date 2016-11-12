@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timer</title>
+    <script src="jquery-3.1.1.min.js"></script>
+    <style>
+        #timer {
+            font-size: 5em;
+        }
+    </style>
+</head>
+<body>
+    <div id="timer">
+        <span id="hours" class="timer">00</span>:
+        <span id="minutes" class="timer">00</span>:
+        <span id="seconds" class="timer">00</span>
+        <button id="start-timer">Start</button>
+        <button id="stop-timer">Stop</button>
+    </div>
+    <script src="timer.js"></script>
+    <script>
+        window.onload=function(){
+            timer();
+        }
+
+        function timer() {
+            let timer
+            let running = false
+            let counter = 0
+
+            let startBtn = $('#start-timer')
+            startBtn.on('click', () => {
+                if(!running){
+                    timer = setInterval(step, 1000)
+                    running = true
+                }
+            })
+
+            let stopBtn = $('#stop-timer')
+            stopBtn.on('click', () => {
+                if(running){
+                    clearInterval(timer)
+                    counter = -1
+                    step()
+                    running = false
+                }
+            })
+
+            function step() {
+                counter++
+
+                let seconds = leadingZero(counter%60)
+                let minutes = leadingZero(Math.floor(counter/60))
+                let hours = leadingZero(Math.floor(minutes/60))
+
+                $('#hours').text(hours)
+                $('#minutes').text(minutes)
+                $('#seconds').text(seconds)
+
+                function leadingZero(num) {
+                    return (num < 10) ? ("0" + num) : num;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

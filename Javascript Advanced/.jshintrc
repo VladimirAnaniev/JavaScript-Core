@@ -1,0 +1,11 @@
+{
+  "undef": true,
+  "unused": true,
+  "predef": [ "MY_GLOBAL" ],
+  "esversion": 6,
+  "asi": true,
+  "browser": true,
+  "mocha": true,
+  "node": true,
+  "jquery": true
+}
