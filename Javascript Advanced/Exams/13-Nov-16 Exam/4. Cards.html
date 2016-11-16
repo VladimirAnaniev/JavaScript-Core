@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cards</title>
+    <style>
+        div.card {
+            display: inline-block; padding: 10px; margin: 10px;
+            width: 50px; height: 80px; background: #EEE;
+            border: 3px solid #DDD; border-radius: 5px;
+            font-size: 18pt; text-align: center; line-height: 75px;
+        }
+    </style>
+    <script src="../../Exercises/3. jQuery and DOM/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+    <div id="main"></div>
+    <script>
+        function cardDeckBuilder(selector) {
+
+            class Card {
+                constructor(face, suit) {
+                    this.suit = suit
+                    this.face = face
+                }
+
+                set suit(suit) {
+                    if(suit!='S'&&suit!='H'&&suit!='D'&&suit!='C') throw new Error()
+                    this._suit = suit
+                }
+
+                get suit() {
+                    return this._suit
+                }
+
+                set face(face) {
+                    if(!(face>=2 && face<=10) && face!='J' &&face!='K' && face!='Q' && face!='A') throw new Error()
+                    this._face = face
+                }
+
+                get face() {
+                    return this._face
+                }
+
+                toString() {
+                    let suit =''
+                    if(this.suit=='S') suit = '\u2660 '
+                    else if(this.suit=='H') suit = '\u2665'
+                    else if (this.suit=='D') suit = '\u2666'
+                    else if(this.suit =='C') suit = '\u2663'
+
+                    return this.face+' '+suit
+                }
+            }
+
+            let parent = $(selector)
+
+            function reverseCards() {
+                let cardsArr = [...parent.find('div')]
+                let reverseArr = cardsArr.reverse()
+                for(let i = 0;i<cardsArr.length;i++) {
+                    cardsArr[i].remove()
+                    parent.append(reverseArr[i])
+                }
+            }
+
+            return {
+                addCard: function (face, suit) {
+                    try {
+                        let card = new Card(face,suit)
+                        let cardDiv = $('<div class="card">').text(card.toString()).on('click', () => reverseCards())
+                        parent.append(cardDiv)
+                    }
+                    catch(err) {
+                        console.log('ERROR')
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        $(function() {
+            let builder = cardDeckBuilder("#main");
+            builder.addCard("10", "D");
+            builder.addCard("K", "S");
+            builder.addCard("Q", "H");
+            builder.addCard("4", "C");
+        });
+    </script>
+</body>
+</html>
