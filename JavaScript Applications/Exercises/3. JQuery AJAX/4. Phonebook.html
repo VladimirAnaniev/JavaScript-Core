@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phonebook</title>
+    <script src="../../../jquery-3.1.1.min.js"></script>
+</head>
+<body>
+    <h1>Phonebook</h1>
+    <ul id="phonebook"></ul>
+    <button id="btnLoad">Load</button>
+
+    <h2>Create Contact</h2>
+    Person: <input type="text" id="person"/>
+    <br>
+    Phone: <input type="text" id="phone"/>
+    <br>
+    <button id="btnCreate">Create</button>
+    <script>
+        attachEvents();
+
+        function attachEvents() {
+            $('#btnLoad').on('click', loadEntries)
+            $('#btnCreate').on('click', createContact)
+
+            function loadEntries() {
+                $.get('https://phonebook-nakov.firebaseio.com/phonebook.json')
+                        .then(successLoad)
+
+                function successLoad(data) {
+                    let phonebook = $('#phonebook')
+                    phonebook.empty()
+
+                    for(let contact of Object.keys(data)) {
+                        let li = $('<li>').attr('id',contact).text(`${data[contact].person}: ${data[contact].phone}`)
+                                .append($('<button>').text('[Delete]').on('click', deleteContact))
+                        phonebook.append(li)
+                    }
+                }
+            }
+
+            function deleteContact() {
+                let key = this.parentElement.id
+                $.ajax({
+                    url:'https://phonebook-nakov.firebaseio.com/phonebook/'+key+'.json',
+                    type:'DELETE',
+                    success: successDel
+                })
+
+                function successDel() {
+                    loadEntries()
+                }
+            }
+
+            function createContact() {
+                let person = $('#person').val()
+                let phone = $('#phone').val()
+
+                $('#person').val('')
+                $('#phone').val('')
+
+                $.ajax({
+                    url:'https://phonebook-nakov.firebaseio.com/phonebook.json',
+                    type:'POST',
+                    data: {
+                        "person": person,
+                        "phone": phone
+                    },
+                    success: successCreate,
+                    error: handleError
+                })
+
+                function handleError(err) {
+                    console.dir(err)
+                }
+
+                function successCreate() {
+                    console.log('sad')
+                    loadEntries()
+                }
+            }
+        }
+    </script>
+</body>
+</html>
