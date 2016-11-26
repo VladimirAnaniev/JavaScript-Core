@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forecatser</title>
+    <style>
+        #content { width: 400px; }
+        #request { text-align: center; }
+        .bl { width: 300px; }
+        #current { text-align: center; font-size: 2em; }
+        #upcoming { text-align: center; }
+        .condition { text-align: left; display: inline-block; }
+        .symbol { font-size: 4em; display: inline-block; }
+        .forecast-data { display: block; }
+        .upcoming { display: inline-block; margin: 1.5em; }
+        .label { margin-top: 1em; font-size: 1.5em; background-color: aquamarine; font-weight: 400; }
+    </style>
+    <script src="../../../jquery-3.1.1.min.js"></script>
+</head>
+<body>
+    <div id="content">
+        <div id="request">
+            <input id="location" class='bl' type="text">
+            <input id="submit" class="bl" type="button" value="Get Weather">
+        </div>
+        <div id="forecast" style="display:none">
+            <div id="current">
+                <div class="label">Current conditions</div>
+            </div>
+            <div id="upcoming">
+                <div class="label">Three-day forecast</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        attachEvents();
+
+        function attachEvents() {
+            $('#submit').on('click', function () {
+                let locationInput = $('#location')
+                let location = locationInput.val()
+                locationInput.val('')
+
+                $.get('https://judgetests.firebaseio.com/locations.json')
+                        .then(locationsFound)
+                        .catch(error)
+
+
+                function locationsFound(data) {
+                    let element = data.filter(x => x.name == location)[0]
+                    if(!element) {
+                        error()
+                        return
+                    }
+                    let code = element.code
+
+                    let todayForecast = $.get('https://judgetests.firebaseio.com/forecast/today/'+code+'.json ')
+
+                    let threeDayForecast = $.get('https://judgetests.firebaseio.com/forecast/upcoming/'+code+'.json ')
+
+                    Promise.all([todayForecast,threeDayForecast])
+                            .then(displayForecast)
+                            .catch(error)
+
+                    function displayForecast([todayData, threeDayData]) {
+                        let currentDiv = $('#current')
+                        let forecastDiv = $('#upcoming')
+                        $('#forecast').show()
+                        let forecast = todayData.forecast
+
+                        let symbols = new Map()
+
+                        symbols.set('Sunny', '&#x2600;')
+                        symbols.set('Partly sunny', '&#x26C5;')
+                        symbols.set('Overcast', '&#x2601;')
+                        symbols.set('Rain', '&#x2614;')
+                        symbols.set('Degrees', '&#176;')
+
+                        currentDiv.append($(`<span class="condition symbol">${symbols.get(forecast.condition)}</span>`))
+                                .append($('<span class="condition">')
+                                        .append($('<span class="forecast-data">').text(todayData.name))
+                                        .append($(`<span class="forecast-data">${forecast.low+symbols.get('Degrees')}\\${forecast.high+symbols.get('Degrees')}</span>`))
+                                        .append($('<span class="forecast-data">').text(forecast.condition)))
+
+                        let upcomingForecasts = threeDayData.forecast
+
+                        for(let i = 0; i<3;i++) {
+                            let currentDay = $('<span class="upcoming">').append($(`<span class="symbol">${symbols.get(upcomingForecasts[i].condition)}</span>`))
+                                    .append($(`<span class="forecast-data">${upcomingForecasts[i].low+symbols.get('Degrees')}\\${upcomingForecasts[i].high+symbols.get('Degrees')}</span>`))
+                                    .append($('<span class="forecast-data">').text(upcomingForecasts[i].condition))
+
+                            forecastDiv.append(currentDay)
+                        }
+                    }
+                }
+
+                function error(err) {
+                    console.dir(err)
+                    $('#forecast').text('Error').show()
+                }
+            })
+        }
+    </script>
+</body>
+</html>

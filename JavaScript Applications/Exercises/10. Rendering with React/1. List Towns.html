@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List Town</title>
+    <script src="https://unpkg.com/react/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom/dist/react-dom.js"></script>
+    <script src="https://unpkg.com/babel-standalone"></script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+<script type="text/babel">
+    listTowns('root')
+    function listTowns(selector) {
+
+        let Form = React.createClass({
+            submitClicked: function () {
+                let data = 
+            },
+
+            render: function () {
+                return <form>
+                        <input type="text"/>
+                        <input type="submit" value="Submit" onClick={submitClicked()}/>
+                    </form>
+            }
+        })
+
+        let App = React.createClass({
+            render: function () {
+                return <div>
+                    <Form />
+                </div>
+            }
+        })
+
+
+        ReactDOM.render(
+                <App />,
+                document.getElementById(selector)
+        );
+    }
+</script>
+</html>
