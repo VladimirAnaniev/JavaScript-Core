@@ -25,26 +25,43 @@
         </div>
     </div>
     <script>
-        function getInfo() {
+        function post() {
             // TODO ...
-            let id = $('#stopId').val()
-
-            let url = 'https://judgetests.firebaseio.com/businfo/'+id+'.json'
-
-            $.get(url).then(displayCorrect).catch(displayError)
-
-            function displayCorrect(data) {
-                $('#stopName').text(data.name)
-                for(let bus of Object.keys(data.buses)){
-                    $('#buses').append($('<li>').text(`Bus ${bus} arrives in ${data.buses[bus]} minutes`))
-                }
-                console.dir(data)
-            }
-            
-            function displayError(err) {
-                $('#stopName').text('Error')
-            }
+          $.ajax({
+            method:'POST',
+            url: 'https://baas.kinvey.com/appdata/kid_ByoF18kmx/Reservations',
+            contentType: 'application/json',
+            data: JSON.stringify({
+              startDate: new Date(2015,11,1),
+              endDate: new Date(2015,11,2),
+              price: 99
+            }),
+            headers: {Authorization: 'Basic Z3Vlc3Q6Z3Vlc3Q='}
+          })
+            .then(function (data) {
+              console.dir(data)
+            })
+            .catch(function (err) {
+              console.dir(err)
+            })
         }
+        //post()
+
+        function getInfo() {
+          // TODO ...
+          $.get({
+            url: 'https://baas.kinvey.com/appdata/kid_ByoF18kmx/Reservations/?query={"startDate":{"$gt" : "2015-11-01", "$lt" : "2016-0-01"}}',
+            headers: {Authorization: 'Basic Z3Vlc3Q6Z3Vlc3Q='}
+          })
+            .then(function (data) {
+              console.dir(data)
+            })
+            .catch(function (err) {
+              console.dir(err)
+            })
+        }
+        getInfo()
+
     </script>
 </body>
 </html>

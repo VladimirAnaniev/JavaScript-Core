@@ -13,24 +13,47 @@
 <script type="text/babel">
     listTowns('root')
     function listTowns(selector) {
-
         let Form = React.createClass({
-            submitClicked: function () {
-                let data = 
+            handleSubmit: function (event) {
+                event.preventDefault()
+                this.props.onsubmit(event.target.children[0].value)
             },
 
             render: function () {
-                return <form>
+                return <form onSubmit={this.handleSubmit}>
                         <input type="text"/>
-                        <input type="submit" value="Submit" onClick={submitClicked()}/>
+                        <input type="submit" value="Submit"/>
                     </form>
             }
         })
 
+        let List = React.createClass({
+            renderAllListElements: function () {
+              return this.props.data.map((x,i) => <li key={i}>{x}</li>)
+            },
+
+            render: function () {
+                return <ul>
+                    {this.renderAllListElements()}
+                </ul>
+            }
+        })
+
         let App = React.createClass({
+            getInitialState: function () {
+                let elements = []
+                return {elements}
+            },
+
+            handleFormSubmit: function (text) {
+                let elements = text.split(', ')
+                this.setState({elements})
+            },
+
             render: function () {
                 return <div>
-                    <Form />
+                    <Form onsubmit={this.handleFormSubmit}/>
+                    <List data={this.state.elements}/>
                 </div>
             }
         })
